@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 from pydantic_settings import BaseSettings
 
 
@@ -22,6 +24,12 @@ class Settings(BaseSettings):
     motor_baudrate: int = 1_000_000
     motor_id_1: int = 1
     motor_id_2: int = 2
+
+    # Motor position limits (radians). Commands outside these are rejected.
+    motor1_min: float = math.radians(-85)   # -1.4835 rad
+    motor1_max: float = 0.0
+    motor2_min: float = math.radians(-116)  # -2.0245 rad
+    motor2_max: float = 0.0
 
     # Logging
     log_level: str = "INFO"

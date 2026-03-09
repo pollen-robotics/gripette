@@ -29,6 +29,10 @@ def serve() -> None:
         baudrate=settings.motor_baudrate,
         id_1=settings.motor_id_1,
         id_2=settings.motor_id_2,
+        limits=(
+            (settings.motor1_min, settings.motor1_max),
+            (settings.motor2_min, settings.motor2_max),
+        ),
     )
 
     camera.start()

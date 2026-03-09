@@ -35,11 +35,14 @@ class MotorController:
         id_1: int = 1,
         id_2: int = 2,
         timeout: float = 1.0,
+        limits: tuple[tuple[float, float], tuple[float, float]] | None = None,
     ):
         self.port = port
         self.baudrate = baudrate
         self.ids = [id_1, id_2]
         self.timeout = timeout
+        # limits: ((m1_min, m1_max), (m2_min, m2_max)) in radians
+        self.limits = limits
         self._lock = threading.Lock()
         self._controller = None
         self._mock = not _HAS_RUSTYPOT
@@ -76,8 +79,23 @@ class MotorController:
             pos = self._controller.sync_read_present_position(self.ids)
         return (pos[0], pos[1])
 
+    def _check_limits(self, pos1: float, pos2: float) -> None:
+        """Raise ValueError if positions are outside configured limits."""
+        if self.limits is None:
+            return
+        (m1_min, m1_max), (m2_min, m2_max) = self.limits
+        if not (m1_min <= pos1 <= m1_max):
+            raise ValueError(
+                f"Motor 1 goal {pos1:.3f} rad outside limits [{m1_min:.3f}, {m1_max:.3f}]"
+            )
+        if not (m2_min <= pos2 <= m2_max):
+            raise ValueError(
+                f"Motor 2 goal {pos2:.3f} rad outside limits [{m2_min:.3f}, {m2_max:.3f}]"
+            )
+
     def write_goal_positions(self, pos1: float, pos2: float) -> None:
-        """Write goal positions in radians. Thread-safe."""
+        """Write goal positions in radians. Thread-safe. Rejects out-of-range commands."""
+        self._check_limits(pos1, pos2)
         if self._mock:
             self._mock_positions = [pos1, pos2]
             logger.debug("Mock motors → goals: (%.3f, %.3f)", pos1, pos2)
