@@ -54,11 +54,19 @@ class MotorController:
             self.port, self.baudrate, self.timeout,
         )
         # Verify communication by reading positions
-        pos = self._controller.sync_read_present_position(self.ids)
-        logger.info(
-            "Motors started on %s: ids=%s, positions=%s",
-            self.port, self.ids, pos,
-        )
+        try:
+            pos = self._controller.sync_read_present_position(self.ids)
+            logger.info(
+                "Motors started on %s: ids=%s, positions=%s",
+                self.port, self.ids, pos,
+            )
+        except RuntimeError as e:
+            logger.error(
+                "Motor communication failed on %s: %s — falling back to mock",
+                self.port, e,
+            )
+            self._controller = None
+            self._mock = True
 
     def read_positions(self) -> tuple[float, float]:
         """Read current positions in radians. Thread-safe."""
