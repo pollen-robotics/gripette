@@ -1,10 +1,14 @@
 """Rustypot wrapper for two Feetech STS3215 servos.
 
 Falls back to a mock (simulated positions) when rustypot is unavailable.
+
+Rustypot API:
+  controller = Sts3215PyController(serial_port, baudrate, timeout)
+  controller.sync_read_present_position(ids)  -> list[float]  (radians)
+  controller.sync_write_goal_position(ids, values)
 """
 
 import logging
-import math
 import threading
 
 logger = logging.getLogger(__name__)
@@ -30,10 +34,12 @@ class MotorController:
         baudrate: int = 1_000_000,
         id_1: int = 1,
         id_2: int = 2,
+        timeout: float = 1.0,
     ):
         self.port = port
         self.baudrate = baudrate
         self.ids = [id_1, id_2]
+        self.timeout = timeout
         self._lock = threading.Lock()
         self._controller = None
         self._mock = not _HAS_RUSTYPOT
@@ -44,11 +50,13 @@ class MotorController:
         if self._mock:
             logger.warning("rustypot not available — using mock motors")
             return
-        self._controller = Sts3215PyController(self.port, self.baudrate, self.ids)
+        self._controller = Sts3215PyController(
+            self.port, self.baudrate, self.timeout,
+        )
         # Verify communication by reading positions
-        pos = self._controller.get_present_position()
+        pos = self._controller.sync_read_present_position(self.ids)
         logger.info(
-            "Motors started on %s: id=%s, positions=%s",
+            "Motors started on %s: ids=%s, positions=%s",
             self.port, self.ids, pos,
         )
 
@@ -57,7 +65,7 @@ class MotorController:
         if self._mock:
             return (self._mock_positions[0], self._mock_positions[1])
         with self._lock:
-            pos = self._controller.get_present_position()
+            pos = self._controller.sync_read_present_position(self.ids)
         return (pos[0], pos[1])
 
     def write_goal_positions(self, pos1: float, pos2: float) -> None:
@@ -67,11 +75,9 @@ class MotorController:
             logger.debug("Mock motors → goals: (%.3f, %.3f)", pos1, pos2)
             return
         with self._lock:
-            self._controller.set_goal_position([pos1, pos2])
+            self._controller.sync_write_goal_position(self.ids, [pos1, pos2])
 
     def stop(self) -> None:
         if self._controller is not None:
-            # No explicit close needed for rustypot controller,
-            # but we clear the reference
             self._controller = None
             logger.info("Motors stopped")

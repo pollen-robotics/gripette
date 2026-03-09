@@ -5,8 +5,8 @@ After=network.target
 [Service]
 Type=simple
 User=rasp
-WorkingDirectory=/home/rasp/Project/Repo/grabette-gripper
-ExecStart=/home/rasp/Project/Repo/grabette-gripper/.venv/bin/python -m grabette_gripper
+WorkingDirectory=/home/rasp/Project/Repo/grabette_gripper
+ExecStart=/home/rasp/Project/Repo/grabette_gripper/.venv/bin/python -m grabette_gripper
 Restart=on-failure
 RestartSec=5
 Environment=PYTHONUNBUFFERED=1
