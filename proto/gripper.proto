@@ -6,6 +6,8 @@ service GripperService {
   rpc StreamState (StreamRequest) returns (stream GripperFrame);
   // Unary: send goal positions to motors
   rpc SendMotorCommand (MotorCommand) returns (MotorCommandResponse);
+  // Unary: enable/disable motor torque
+  rpc SetTorque (TorqueCommand) returns (TorqueResponse);
   // Unary: health check
   rpc Ping (PingRequest) returns (PingResponse);
 }
@@ -30,6 +32,15 @@ message MotorCommand {
 }
 
 message MotorCommandResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+message TorqueCommand {
+  bool enable = 1;
+}
+
+message TorqueResponse {
   bool success = 1;
   string error = 2;
 }

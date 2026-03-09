@@ -45,6 +45,20 @@ class MotorCommandResponse(_message.Message):
     error: str
     def __init__(self, success: bool = ..., error: _Optional[str] = ...) -> None: ...
 
+class TorqueCommand(_message.Message):
+    __slots__ = ("enable",)
+    ENABLE_FIELD_NUMBER: _ClassVar[int]
+    enable: bool
+    def __init__(self, enable: bool = ...) -> None: ...
+
+class TorqueResponse(_message.Message):
+    __slots__ = ("success", "error")
+    SUCCESS_FIELD_NUMBER: _ClassVar[int]
+    ERROR_FIELD_NUMBER: _ClassVar[int]
+    success: bool
+    error: str
+    def __init__(self, success: bool = ..., error: _Optional[str] = ...) -> None: ...
+
 class PingRequest(_message.Message):
     __slots__ = ()
     def __init__(self) -> None: ...

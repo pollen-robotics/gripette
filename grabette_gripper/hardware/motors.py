@@ -85,6 +85,15 @@ class MotorController:
         with self._lock:
             self._controller.sync_write_goal_position(self.ids, [pos1, pos2])
 
+    def set_torque(self, enable: bool) -> None:
+        """Enable or disable motor torque. Thread-safe."""
+        if self._mock:
+            logger.debug("Mock motors → torque %s", "on" if enable else "off")
+            return
+        with self._lock:
+            self._controller.sync_write_torque_enable(self.ids, [enable, enable])
+        logger.info("Motors torque %s", "enabled" if enable else "disabled")
+
     def stop(self) -> None:
         if self._controller is not None:
             self._controller = None

@@ -44,6 +44,11 @@ class GripperServiceStub(object):
                 request_serializer=gripper__pb2.MotorCommand.SerializeToString,
                 response_deserializer=gripper__pb2.MotorCommandResponse.FromString,
                 _registered_method=True)
+        self.SetTorque = channel.unary_unary(
+                '/grabette.gripper.GripperService/SetTorque',
+                request_serializer=gripper__pb2.TorqueCommand.SerializeToString,
+                response_deserializer=gripper__pb2.TorqueResponse.FromString,
+                _registered_method=True)
         self.Ping = channel.unary_unary(
                 '/grabette.gripper.GripperService/Ping',
                 request_serializer=gripper__pb2.PingRequest.SerializeToString,
@@ -68,6 +73,13 @@ class GripperServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SetTorque(self, request, context):
+        """Unary: enable/disable motor torque
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def Ping(self, request, context):
         """Unary: health check
         """
@@ -87,6 +99,11 @@ def add_GripperServiceServicer_to_server(servicer, server):
                     servicer.SendMotorCommand,
                     request_deserializer=gripper__pb2.MotorCommand.FromString,
                     response_serializer=gripper__pb2.MotorCommandResponse.SerializeToString,
+            ),
+            'SetTorque': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetTorque,
+                    request_deserializer=gripper__pb2.TorqueCommand.FromString,
+                    response_serializer=gripper__pb2.TorqueResponse.SerializeToString,
             ),
             'Ping': grpc.unary_unary_rpc_method_handler(
                     servicer.Ping,
@@ -148,6 +165,33 @@ class GripperService(object):
             '/grabette.gripper.GripperService/SendMotorCommand',
             gripper__pb2.MotorCommand.SerializeToString,
             gripper__pb2.MotorCommandResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetTorque(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/grabette.gripper.GripperService/SetTorque',
+            gripper__pb2.TorqueCommand.SerializeToString,
+            gripper__pb2.TorqueResponse.FromString,
             options,
             channel_credentials,
             insecure,

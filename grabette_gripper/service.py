@@ -69,6 +69,15 @@ class GripperServicer(gripper_pb2_grpc.GripperServiceServicer):
             logger.exception("Motor command failed")
             return gripper_pb2.MotorCommandResponse(success=False, error=str(e))
 
+    def SetTorque(self, request, context):
+        """Unary: enable/disable motor torque."""
+        try:
+            self._motors.set_torque(request.enable)
+            return gripper_pb2.TorqueResponse(success=True)
+        except Exception as e:
+            logger.exception("Torque command failed")
+            return gripper_pb2.TorqueResponse(success=False, error=str(e))
+
     def Ping(self, request, context):
         """Unary: health check."""
         uptime = self._sync.get_timestamp_ms() / 1000.0

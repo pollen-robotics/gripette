@@ -59,6 +59,20 @@ class GripperClient:
         resp = self._stub.Ping(gripper_pb2.PingRequest())
         return {"status": resp.status, "uptime_seconds": resp.uptime_seconds}
 
+    def torque_on(self) -> bool:
+        """Enable motor torque."""
+        resp = self._stub.SetTorque(gripper_pb2.TorqueCommand(enable=True))
+        if not resp.success:
+            raise RuntimeError(f"Torque command failed: {resp.error}")
+        return True
+
+    def torque_off(self) -> bool:
+        """Disable motor torque (motors can be moved by hand)."""
+        resp = self._stub.SetTorque(gripper_pb2.TorqueCommand(enable=False))
+        if not resp.success:
+            raise RuntimeError(f"Torque command failed: {resp.error}")
+        return True
+
     def move(self, motor1: float, motor2: float) -> bool:
         """Send goal positions (radians) to both motors. Returns success."""
         resp = self._stub.SendMotorCommand(
