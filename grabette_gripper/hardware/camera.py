@@ -63,10 +63,12 @@ def _encode_jpeg(array, quality: int) -> bytes:
     # Use simplejpeg if available (faster, installed with picamera2), else PIL
     try:
         import simplejpeg
-        return simplejpeg.encode_jpeg(array, quality=quality, colorspace="RGB")
+        # picamera2 RGB888 format is actually BGR from the ISP
+        return simplejpeg.encode_jpeg(array, quality=quality, colorspace="BGR")
     except ImportError:
         from PIL import Image
-        img = Image.fromarray(array)
+        # PIL expects RGB, so swap channels
+        img = Image.fromarray(array[:, :, ::-1])
         buf = io.BytesIO()
         img.save(buf, format="JPEG", quality=quality)
         return buf.getvalue()
