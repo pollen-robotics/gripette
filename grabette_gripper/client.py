@@ -73,6 +73,11 @@ class GripperClient:
             raise RuntimeError(f"Torque command failed: {resp.error}")
         return True
 
+    def read_motors(self) -> tuple[float, float]:
+        """Read motor positions (radians). Lightweight, no camera."""
+        resp = self._stub.ReadMotors(gripper_pb2.ReadMotorsRequest())
+        return (resp.motor1_position, resp.motor2_position)
+
     def move(self, motor1: float, motor2: float) -> bool:
         """Send goal positions (radians) to both motors. Returns success."""
         resp = self._stub.SendMotorCommand(

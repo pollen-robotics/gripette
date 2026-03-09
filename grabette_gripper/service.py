@@ -69,6 +69,14 @@ class GripperServicer(gripper_pb2_grpc.GripperServiceServicer):
             logger.exception("Motor command failed")
             return gripper_pb2.MotorCommandResponse(success=False, error=str(e))
 
+    def ReadMotors(self, request, context):
+        """Unary: read motor positions (lightweight, no camera)."""
+        pos1, pos2 = self._motors.read_positions()
+        return gripper_pb2.MotorState(
+            motor1_position=pos1,
+            motor2_position=pos2,
+        )
+
     def SetTorque(self, request, context):
         """Unary: enable/disable motor torque."""
         try:

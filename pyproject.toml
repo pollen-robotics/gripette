@@ -20,11 +20,14 @@ dev = [
 ]
 
 [tool.uv]
-# numpy is provided by system-site-packages on the Pi (required by picamera2).
-# This override prevents uv from installing it, avoiding a slow source build
-# on the Pi Zero 2W. Requires --system-site-packages venv.
-override-dependencies = ["numpy; python_version < '3.0'"]
+# On the Pi Zero 2W, numpy is provided by system-site-packages (via picamera2).
+# To avoid a slow source build on the Pi, run: uv sync --extra rpi --no-install-package numpy
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "matplotlib>=3.10.8",
+]

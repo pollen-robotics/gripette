@@ -59,6 +59,10 @@ class TorqueResponse(_message.Message):
     error: str
     def __init__(self, success: bool = ..., error: _Optional[str] = ...) -> None: ...
 
+class ReadMotorsRequest(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
+
 class PingRequest(_message.Message):
     __slots__ = ()
     def __init__(self) -> None: ...

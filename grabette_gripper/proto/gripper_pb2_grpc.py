@@ -44,6 +44,11 @@ class GripperServiceStub(object):
                 request_serializer=gripper__pb2.MotorCommand.SerializeToString,
                 response_deserializer=gripper__pb2.MotorCommandResponse.FromString,
                 _registered_method=True)
+        self.ReadMotors = channel.unary_unary(
+                '/grabette.gripper.GripperService/ReadMotors',
+                request_serializer=gripper__pb2.ReadMotorsRequest.SerializeToString,
+                response_deserializer=gripper__pb2.MotorState.FromString,
+                _registered_method=True)
         self.SetTorque = channel.unary_unary(
                 '/grabette.gripper.GripperService/SetTorque',
                 request_serializer=gripper__pb2.TorqueCommand.SerializeToString,
@@ -68,6 +73,13 @@ class GripperServiceServicer(object):
 
     def SendMotorCommand(self, request, context):
         """Unary: send goal positions to motors
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ReadMotors(self, request, context):
+        """Unary: read motor positions (lightweight, no camera)
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -99,6 +111,11 @@ def add_GripperServiceServicer_to_server(servicer, server):
                     servicer.SendMotorCommand,
                     request_deserializer=gripper__pb2.MotorCommand.FromString,
                     response_serializer=gripper__pb2.MotorCommandResponse.SerializeToString,
+            ),
+            'ReadMotors': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReadMotors,
+                    request_deserializer=gripper__pb2.ReadMotorsRequest.FromString,
+                    response_serializer=gripper__pb2.MotorState.SerializeToString,
             ),
             'SetTorque': grpc.unary_unary_rpc_method_handler(
                     servicer.SetTorque,
@@ -165,6 +182,33 @@ class GripperService(object):
             '/grabette.gripper.GripperService/SendMotorCommand',
             gripper__pb2.MotorCommand.SerializeToString,
             gripper__pb2.MotorCommandResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReadMotors(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/grabette.gripper.GripperService/ReadMotors',
+            gripper__pb2.ReadMotorsRequest.SerializeToString,
+            gripper__pb2.MotorState.FromString,
             options,
             channel_credentials,
             insecure,
