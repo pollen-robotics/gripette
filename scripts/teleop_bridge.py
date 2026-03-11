@@ -1,4 +1,4 @@
-"""Teleoperation bridge: read angles from grabette, send to grabette-gripper.
+"""Teleoperation bridge: read angles from grabette, send to gripette.
 
 Reads proximal/distal angles from grabette's REST API and forwards them
 as motor commands to the gripper. Run with --dry-run first to check
@@ -8,7 +8,7 @@ Usage:
     uv run python scripts/teleop_bridge.py --dry-run      # just print, no motor commands
     uv run python scripts/teleop_bridge.py                 # actually move motors
 
-Requires grabette running on 192.168.1.35:8000 and grabette-gripper on 192.168.1.36:50051.
+Requires grabette running on 192.168.1.35:8000 and gripette on 192.168.1.36:50051.
 """
 
 import argparse
@@ -17,7 +17,7 @@ import math
 import time
 import urllib.request
 
-from grabette_gripper.client import GripperClient
+from gripette.client import GripperClient
 
 GRABETTE_URL = "http://192.168.1.35:8000/api/state"
 GRIPPER_TARGET = "192.168.1.36:50051"

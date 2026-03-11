@@ -1,4 +1,4 @@
-"""Entry point for `python -m grabette_gripper`."""
+"""Entry point for `python -m gripette`."""
 
 import logging
 

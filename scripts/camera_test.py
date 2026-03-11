@@ -7,7 +7,7 @@ Usage:
 import sys
 import time
 
-from grabette_gripper.client import GripperClient
+from gripette.client import GripperClient
 
 TARGET = sys.argv[1] if len(sys.argv) > 1 else "192.168.1.36:50051"
 NUM_FRAMES = 50

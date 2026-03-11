@@ -22,7 +22,7 @@ import math
 import sys
 import time
 
-from grabette_gripper.client import GripperClient
+from gripette.client import GripperClient
 
 # Sinus parameters
 FREQ = 1.0         # Hz

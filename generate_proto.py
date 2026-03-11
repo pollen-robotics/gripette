@@ -8,7 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-OUTPUT_DIR = Path("grabette_gripper/proto")
+OUTPUT_DIR = Path("gripette/proto")
 
 def main():
     cmd = [
@@ -31,7 +31,7 @@ def main():
     )
     grpc_file.write_text(text)
 
-    print("Proto files generated and fixed in grabette_gripper/proto/")
+    print("Proto files generated and fixed in gripette/proto/")
 
 if __name__ == "__main__":
     main()

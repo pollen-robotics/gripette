@@ -1,5 +1,5 @@
 syntax = "proto3";
-package grabette.gripper;
+package gripette;
 
 service GripperService {
   // Server-streaming: 10Hz camera frames + motor positions

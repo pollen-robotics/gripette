@@ -35,27 +35,27 @@ class GripperServiceStub(object):
             channel: A grpc.Channel.
         """
         self.StreamState = channel.unary_stream(
-                '/grabette.gripper.GripperService/StreamState',
+                '/gripette.GripperService/StreamState',
                 request_serializer=gripper__pb2.StreamRequest.SerializeToString,
                 response_deserializer=gripper__pb2.GripperFrame.FromString,
                 _registered_method=True)
         self.SendMotorCommand = channel.unary_unary(
-                '/grabette.gripper.GripperService/SendMotorCommand',
+                '/gripette.GripperService/SendMotorCommand',
                 request_serializer=gripper__pb2.MotorCommand.SerializeToString,
                 response_deserializer=gripper__pb2.MotorCommandResponse.FromString,
                 _registered_method=True)
         self.ReadMotors = channel.unary_unary(
-                '/grabette.gripper.GripperService/ReadMotors',
+                '/gripette.GripperService/ReadMotors',
                 request_serializer=gripper__pb2.ReadMotorsRequest.SerializeToString,
                 response_deserializer=gripper__pb2.MotorState.FromString,
                 _registered_method=True)
         self.SetTorque = channel.unary_unary(
-                '/grabette.gripper.GripperService/SetTorque',
+                '/gripette.GripperService/SetTorque',
                 request_serializer=gripper__pb2.TorqueCommand.SerializeToString,
                 response_deserializer=gripper__pb2.TorqueResponse.FromString,
                 _registered_method=True)
         self.Ping = channel.unary_unary(
-                '/grabette.gripper.GripperService/Ping',
+                '/gripette.GripperService/Ping',
                 request_serializer=gripper__pb2.PingRequest.SerializeToString,
                 response_deserializer=gripper__pb2.PingResponse.FromString,
                 _registered_method=True)
@@ -129,9 +129,9 @@ def add_GripperServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'grabette.gripper.GripperService', rpc_method_handlers)
+            'gripette.GripperService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('grabette.gripper.GripperService', rpc_method_handlers)
+    server.add_registered_method_handlers('gripette.GripperService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
@@ -152,7 +152,7 @@ class GripperService(object):
         return grpc.experimental.unary_stream(
             request,
             target,
-            '/grabette.gripper.GripperService/StreamState',
+            '/gripette.GripperService/StreamState',
             gripper__pb2.StreamRequest.SerializeToString,
             gripper__pb2.GripperFrame.FromString,
             options,
@@ -179,7 +179,7 @@ class GripperService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/grabette.gripper.GripperService/SendMotorCommand',
+            '/gripette.GripperService/SendMotorCommand',
             gripper__pb2.MotorCommand.SerializeToString,
             gripper__pb2.MotorCommandResponse.FromString,
             options,
@@ -206,7 +206,7 @@ class GripperService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/grabette.gripper.GripperService/ReadMotors',
+            '/gripette.GripperService/ReadMotors',
             gripper__pb2.ReadMotorsRequest.SerializeToString,
             gripper__pb2.MotorState.FromString,
             options,
@@ -233,7 +233,7 @@ class GripperService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/grabette.gripper.GripperService/SetTorque',
+            '/gripette.GripperService/SetTorque',
             gripper__pb2.TorqueCommand.SerializeToString,
             gripper__pb2.TorqueResponse.FromString,
             options,
@@ -260,7 +260,7 @@ class GripperService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/grabette.gripper.GripperService/Ping',
+            '/gripette.GripperService/Ping',
             gripper__pb2.PingRequest.SerializeToString,
             gripper__pb2.PingResponse.FromString,
             options,

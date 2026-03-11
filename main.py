@@ -1,9 +1,9 @@
-"""Entry point for grabette-gripper gRPC service."""
+"""Entry point for gripette gRPC service."""
 
 import logging
 
-from grabette_gripper.config import settings
-from grabette_gripper.server import serve
+from gripette.config import settings
+from gripette.server import serve
 
 if __name__ == "__main__":
     logging.basicConfig(
