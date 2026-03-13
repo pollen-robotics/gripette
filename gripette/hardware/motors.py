@@ -9,9 +9,14 @@ Rustypot API:
 """
 
 import logging
+import serial
 import threading
+import time
 
 logger = logging.getLogger(__name__)
+
+MAX_RETRIES = 3
+RETRY_DELAY = 0.5  # seconds
 
 try:
     from rustypot import Sts3215PyController
@@ -49,27 +54,52 @@ class MotorController:
         # Mock state
         self._mock_positions = [0.0, 0.0]
 
+    @staticmethod
+    def _flush_serial(port: str, baudrate: int) -> None:
+        """Flush any stale data left in the serial buffer (e.g. from boot console)."""
+        try:
+            ser = serial.Serial(port, baudrate, timeout=0.1)
+            discarded = ser.read(4096)
+            ser.close()
+            if discarded:
+                logger.info("Flushed %d stale bytes from %s", len(discarded), port)
+        except Exception as e:
+            logger.warning("Could not flush serial port %s: %s", port, e)
+
     def start(self) -> None:
         if self._mock:
             logger.warning("rustypot not available — using mock motors")
             return
-        self._controller = Sts3215PyController(
-            self.port, self.baudrate, self.timeout,
+
+        # Flush stale data before opening the controller
+        self._flush_serial(self.port, self.baudrate)
+
+        for attempt in range(1, MAX_RETRIES + 1):
+            self._controller = Sts3215PyController(
+                self.port, self.baudrate, self.timeout,
+            )
+            try:
+                pos = self._controller.sync_read_present_position(self.ids)
+                logger.info(
+                    "Motors started on %s: ids=%s, positions=%s",
+                    self.port, self.ids, pos,
+                )
+                return  # success
+            except RuntimeError as e:
+                logger.warning(
+                    "Motor communication attempt %d/%d on %s failed: %s",
+                    attempt, MAX_RETRIES, self.port, e,
+                )
+                self._controller = None
+                if attempt < MAX_RETRIES:
+                    self._flush_serial(self.port, self.baudrate)
+                    time.sleep(RETRY_DELAY)
+
+        logger.error(
+            "Motor communication failed on %s after %d attempts — falling back to mock",
+            self.port, MAX_RETRIES,
         )
-        # Verify communication by reading positions
-        try:
-            pos = self._controller.sync_read_present_position(self.ids)
-            logger.info(
-                "Motors started on %s: ids=%s, positions=%s",
-                self.port, self.ids, pos,
-            )
-        except RuntimeError as e:
-            logger.error(
-                "Motor communication failed on %s: %s — falling back to mock",
-                self.port, e,
-            )
-            self._controller = None
-            self._mock = True
+        self._mock = True
 
     def read_positions(self) -> tuple[float, float]:
         """Read current positions in radians. Thread-safe."""

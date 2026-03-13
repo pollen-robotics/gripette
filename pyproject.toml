@@ -13,6 +13,7 @@ dependencies = [
 [project.optional-dependencies]
 rpi = [
     "picamera2",
+    "pyserial",
     "rustypot",
 ]
 dev = [
