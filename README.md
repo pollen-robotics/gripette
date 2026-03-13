@@ -137,6 +137,8 @@ Network status is also readable from a dedicated BLE characteristic (auto-update
 
 **Web Bluetooth client**: open the [Gripette BT Tool](https://stevenguyen.github.io/gripette/) in Chrome/Edge on a phone or laptop (requires HTTPS — served via GitHub Pages from `docs/index.html`).
 
+See [docs/bluetooth_setup.md](docs/bluetooth_setup.md) for the full setup guide (BlueZ configuration, troubleshooting, etc.).
+
 ## Proto definition
 
 The gRPC service contract is defined in `proto/gripper.proto`. To regenerate the Python files after modifying it:
