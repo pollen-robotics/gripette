@@ -98,7 +98,9 @@ uv run python scripts/camera_test.py
 # Outputs camera_test.jpg
 ```
 
-## systemd service
+## systemd services
+
+### Main service (gRPC motor+camera)
 
 ```bash
 sudo cp systemd/gripette.service /etc/systemd/system/
@@ -106,6 +108,33 @@ sudo systemctl daemon-reload
 sudo systemctl enable gripette
 sudo systemctl start gripette
 ```
+
+### Bluetooth WiFi configuration
+
+A standalone BLE GATT service allows configuring WiFi credentials on the enclosed Pi Zero 2W without SSH or a screen. A phone or laptop connects via Bluetooth Low Energy, authenticates with a PIN, and sends WiFi credentials.
+
+```bash
+sudo apt install python3-dbus python3-gi   # system deps (usually pre-installed)
+sudo cp systemd/gripette-bluetooth.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable gripette-bluetooth
+sudo systemctl start gripette-bluetooth
+```
+
+Runs as root (required by BlueZ DBus GATT registration). PIN is configurable via `GRIPPER_BT_PIN` env var (default: `00000`).
+
+**BLE commands** (written as UTF-8 to the COMMAND characteristic):
+
+| Command | Response | Description |
+|---|---|---|
+| `PING` | `PONG` | Health check |
+| `PIN_xxxxx` | `OK: Connected` / `ERROR: Incorrect PIN` | Authenticate (required before WIFI/WIFI_RESET) |
+| `WIFI ssid password` | `OK: Connecting to <ssid>` / `ERROR: ...` | Connect to WiFi via nmcli |
+| `WIFI_RESET` | `OK: WiFi connections cleared` | Delete all saved WiFi networks |
+
+Network status is also readable from a dedicated BLE characteristic (auto-updates every 10s).
+
+**Web Bluetooth client**: open `bluetooth_tool.html` in Chrome/Edge on a phone or laptop to interact with the service via a simple UI.
 
 ## Proto definition
 
