@@ -571,6 +571,8 @@ class BluetoothWifiService:
 
         adapter_props = dbus.Interface(adapter, DBUS_PROP_IFACE)
         adapter_props.Set("org.bluez.Adapter1", "Powered", dbus.Boolean(True))
+        # Set the adapter alias so the device shows as "Gripette" (not hostname)
+        adapter_props.Set("org.bluez.Adapter1", "Alias", dbus.String(self.device_name))
         adapter_props.Set("org.bluez.Adapter1", "Discoverable", dbus.Boolean(True))
         adapter_props.Set(
             "org.bluez.Adapter1", "DiscoverableTimeout", dbus.UInt32(0)

@@ -135,7 +135,7 @@ Runs as root (required by BlueZ DBus GATT registration). PIN is configurable via
 
 Network status is also readable from a dedicated BLE characteristic (auto-updates every 10s).
 
-**Web Bluetooth client**: open `bluetooth_tool.html` in Chrome/Edge on a phone or laptop to interact with the service via a simple UI.
+**Web Bluetooth client**: open the [Gripette BT Tool](https://stevenguyen.github.io/gripette/) in Chrome/Edge on a phone or laptop (requires HTTPS — served via GitHub Pages from `docs/index.html`).
 
 ## Proto definition
 
