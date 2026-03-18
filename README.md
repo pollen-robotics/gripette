@@ -9,7 +9,7 @@ Streams camera frames (JPEG) at ~10Hz synchronized with motor positions, and acc
 
 - Raspberry Pi Zero 2W
 - RPi camera module (1296x972, fisheye lens)
-- Two Feetech STS3215 servos on `/dev/ttyS0` (baudrate 1000000, IDs 1 and 2)
+- Two Feetech STS3215 servos on `/dev/serial0` (baudrate 1000000, IDs 1 and 2)
 
 ## Installation
 
@@ -24,6 +24,46 @@ uv run python main.py
 ### Raspberry Pi Zero 2W
 
 Requires system Python 3.11 with `libcamera` and `numpy` installed at the system level.
+
+#### 1. UART configuration
+
+The Pi Zero 2W has two UARTs: PL011 (`ttyAMA0`, full-featured, reliable at 1Mbaud) and mini UART (`ttyS0`, clock-dependent, unreliable at high baudrates). By default Bluetooth uses PL011 and GPIO gets the mini UART — this must be swapped for reliable servo communication.
+
+Edit `/boot/firmware/config.txt` and add (or copy from `config/config.txt`):
+
+```ini
+dtoverlay=miniuart-bt
+enable_uart=1
+```
+
+Edit `/boot/firmware/cmdline.txt` and **remove** `console=serial0,115200` (the kernel serial console conflicts with the servo bus). The file must remain a **single line** — do not add line breaks or the Pi will fail to boot.
+
+Before:
+```
+console=serial0,115200 console=tty1 root=PARTUUID=... rootfstype=ext4 ...
+```
+
+After:
+```
+console=tty1 root=PARTUUID=... rootfstype=ext4 ...
+```
+
+Reboot, then verify:
+```bash
+ls -l /dev/serial0   # should point to ttyAMA0
+```
+
+#### 2. User permissions
+
+Add your user to the `dialout` group for serial port access:
+
+```bash
+sudo usermod -aG dialout rasp
+```
+
+Log out and back in (or reboot) for the group change to take effect.
+
+#### 3. Install dependencies
 
 ```bash
 sudo apt install libcap-dev
@@ -41,7 +81,7 @@ All settings via environment variables with `GRIPPER_` prefix:
 |---|---|---|
 | `GRIPPER_HOST` | `0.0.0.0` | Server bind address |
 | `GRIPPER_PORT` | `50051` | gRPC port |
-| `GRIPPER_MOTOR_PORT` | `/dev/ttyS0` | Serial port for servos |
+| `GRIPPER_MOTOR_PORT` | `/dev/serial0` | Serial port for servos |
 | `GRIPPER_MOTOR_BAUDRATE` | `1000000` | Serial baudrate |
 | `GRIPPER_MOTOR_ID_1` | `1` | First servo ID |
 | `GRIPPER_MOTOR_ID_2` | `2` | Second servo ID |
