@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     jpeg_quality: int = 70
 
     # Motors (Feetech STS3215 on serial bus)
-    motor_port: str = "/dev/ttyS0"
+    motor_port: str = "/dev/serial0"
     motor_baudrate: int = 1_000_000
     motor_id_1: int = 1
     motor_id_2: int = 2
