@@ -90,7 +90,7 @@ sudo systemctl restart gripette-bluetooth
 
 ### 1. Open the Web Bluetooth tool
 
-Open the [Gripette BT Tool](https://stevenguyen.github.io/gripette/) in **Chrome** or **Edge** (Web Bluetooth requires HTTPS — Firefox and Safari are not supported).
+Open the [Gripette BT Tool](https://pollen-robotics.github.io/gripette/) in **Chrome** or **Edge** (Web Bluetooth requires HTTPS — Firefox and Safari are not supported).
 
 ### 2. Connect
 
