@@ -20,6 +20,12 @@ dev = [
     "grpcio-tools>=1.60.0",
 ]
 
+urdf = [
+    "onshape-to-robot>=1.8.1",
+    "pybullet>=3.2.7",
+]
+
+
 [tool.uv]
 # On the Pi Zero 2W, numpy is provided by system-site-packages (via picamera2).
 # To avoid a slow source build on the Pi, run: uv sync --extra rpi --no-install-package numpy
